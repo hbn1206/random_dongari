@@ -12,6 +12,10 @@ if platform.system() == "Darwin":
     rc('font', family='AppleGothic')
 elif platform.system() == "Windows":
     rc('font', family='Malgun Gothic')
+elif platform.system() == "Linux":
+    rc('font', family='NanumGothic')
+
+plt.rcParams['axes.unicode_minus'] = False  # 한글 폰트 적용 시 마이너스 기호 깨짐 방지
 
 # 스트림릿 UI 설정
 st.title("동아리 랜덤 배정 프로그램")
@@ -64,9 +68,9 @@ if st.button("랜덤 배정 시작"):
         
         fig, ax = plt.subplots()
         ax.bar(club_counts.keys(), club_counts.values(), color='skyblue')
-        ax.set_xlabel("동아리")
-        ax.set_ylabel("학생 수")
-        ax.set_title("동아리별 학생 수 분포")
-        ax.set_xticklabels(club_counts.keys(), rotation=45)
+        ax.set_xlabel("동아리", fontsize=12)
+        ax.set_ylabel("학생 수", fontsize=12)
+        ax.set_title("동아리별 학생 수 분포", fontsize=14)
+        ax.set_xticklabels(club_counts.keys(), rotation=45, fontsize=10)
         
         st.pyplot(fig)
