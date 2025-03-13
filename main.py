@@ -43,6 +43,7 @@ b = len(student_names)
 
 assignments = pd.DataFrame(columns=["학생", "동아리"])
 result_area = st.empty()
+final_result_displayed = False
 
 if st.button("랜덤 배정 시작"):
     if a == 0 or b == 0:
@@ -51,7 +52,6 @@ if st.button("랜덤 배정 시작"):
         # 학생을 랜덤으로 섞기
         random.shuffle(student_names)
         
-        st.subheader("배정 과정")
         process_area = st.empty()
         
         # 동아리별 배정 인원 관리
@@ -66,7 +66,7 @@ if st.button("랜덤 배정 시작"):
             # 동아리명 애니메이션 효과
             for _ in range(10):  # 10번 랜덤하게 바꿈
                 temp_club = random.choice(list(club_data.keys()))
-                process_area.write(f"🎲 {student} → {temp_club}")
+                process_area.markdown(f"<h2 style='text-align: center;'>🎲 {student} → {temp_club}</h2>", unsafe_allow_html=True)
                 time.sleep(0.1)
             
             # 최종 결정된 동아리
@@ -74,12 +74,14 @@ if st.button("랜덤 배정 시작"):
             club_assignments[club].append(student)
             
             # 결과 표시 후 잠시 멈춤
-            process_area.write(f"✅ {student} → {club}")
+            process_area.markdown(f"<h2 style='text-align: center; color: green;'>✅ {student} → {club}</h2>", unsafe_allow_html=True)
             time.sleep(0.5)
             
             # 데이터 저장
             assignments = pd.concat([assignments, pd.DataFrame([[student, club]], columns=["학생", "동아리"])], ignore_index=True)
             
-            # 실시간 배정 결과 업데이트 (누적 표시)
-            st.subheader("최종 배정 결과")
+            # 최종 배정 결과 업데이트 (누적 표시, 한 번만 헤더 출력)
+            if not final_result_displayed:
+                st.subheader("최종 배정 결과")
+                final_result_displayed = True
             result_area.dataframe(assignments)
