@@ -3,11 +3,12 @@ import pandas as pd
 import numpy as np
 import time
 import random
-import matplotlib.pyplot as plt
-from matplotlib import rc
 import platform
 
 # 한글 폰트 설정 (MacOS, Windows 대응)
+import matplotlib.pyplot as plt
+from matplotlib import rc
+
 if platform.system() == "Darwin":
     rc('font', family='AppleGothic')
 elif platform.system() == "Windows":
@@ -61,16 +62,3 @@ if st.button("랜덤 배정 시작"):
         # 최종 배정 결과 출력
         st.subheader("최종 배정 결과")
         st.dataframe(assignments)
-        
-        # 시각화: 동아리별 학생 수 그래프
-        st.subheader("동아리별 학생 수 시각화")
-        club_counts = {club: len(members) for club, members in club_assignments.items()}
-        
-        fig, ax = plt.subplots()
-        ax.bar(club_counts.keys(), club_counts.values(), color='skyblue')
-        ax.set_xlabel("동아리", fontsize=12)
-        ax.set_ylabel("학생 수", fontsize=12)
-        ax.set_title("동아리별 학생 수 분포", fontsize=14)
-        ax.set_xticklabels(club_counts.keys(), rotation=45, fontsize=10)
-        
-        st.pyplot(fig)
