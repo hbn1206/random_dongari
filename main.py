@@ -41,15 +41,15 @@ student_names = [student.strip() for student in student_input.split(",") if stud
 a = len(club_data)
 b = len(student_names)
 
+assignments = pd.DataFrame(columns=["학생", "동아리"])
+result_area = st.empty()
+
 if st.button("랜덤 배정 시작"):
     if a == 0 or b == 0:
         st.error("동아리 또는 학생을 입력해주세요.")
     else:
         # 학생을 랜덤으로 섞기
         random.shuffle(student_names)
-        
-        # 배정 결과 저장
-        assignments = pd.DataFrame(columns=["학생", "동아리"])
         
         st.subheader("배정 과정")
         process_area = st.empty()
@@ -80,6 +80,6 @@ if st.button("랜덤 배정 시작"):
             # 데이터 저장
             assignments = pd.concat([assignments, pd.DataFrame([[student, club]], columns=["학생", "동아리"])], ignore_index=True)
             
-            # 실시간 배정 결과 업데이트
+            # 실시간 배정 결과 업데이트 (누적 표시)
             st.subheader("최종 배정 결과")
-            st.dataframe(assignments)
+            result_area.dataframe(assignments)
