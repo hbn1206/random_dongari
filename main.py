@@ -22,14 +22,23 @@ plt.rcParams['axes.unicode_minus'] = False  # 한글 폰트 적용 시 마이너
 st.title("동아리 랜덤 배정 프로그램")
 
 # 동아리 및 학생 입력
-club_input = st.text_input("동아리 이름 입력 (쉼표로 구분)", "동아리 1, 동아리 2, 동아리 3, 동아리 4, 동아리 5")
-student_input = st.text_input("학생 이름 입력 (쉼표로 구분)", "학생 1, 학생 2, 학생 3, 학생 4, 학생 5, 학생 6, 학생 7, 학생 8, 학생 9, 학생 10")
+club_input = st.text_area("동아리 이름과 모집 인원 입력 (형식: 동아리1-5, 동아리2-3, ...)", "동아리 1-5, 동아리 2-3, 동아리 3-4, 동아리 4-2, 동아리 5-6")
+student_input = st.text_area("학생 이름 입력 (쉼표로 구분)", "학생 1, 학생 2, 학생 3, 학생 4, 학생 5, 학생 6, 학생 7, 학생 8, 학생 9, 학생 10")
 
-# 입력값을 리스트로 변환
-club_names = [club.strip() for club in club_input.split(",") if club.strip()]
+# 동아리 및 모집 인원 파싱
+club_info = [club.strip() for club in club_input.split(",") if club.strip()]
+club_data = {}
+for club in club_info:
+    try:
+        name, capacity = club.rsplit("-", 1)
+        club_data[name.strip()] = int(capacity.strip())
+    except ValueError:
+        st.error("입력 형식이 올바르지 않습니다. 예: 동아리1-5, 동아리2-3")
+        st.stop()
+
 student_names = [student.strip() for student in student_input.split(",") if student.strip()]
 
-a = len(club_names)
+a = len(club_data)
 b = len(student_names)
 
 if st.button("랜덤 배정 시작"):
@@ -45,11 +54,15 @@ if st.button("랜덤 배정 시작"):
         st.subheader("배정 과정")
         process_area = st.empty()
         
-        # 랜덤 배정 (균등 분배)
-        club_assignments = {club: [] for club in club_names}
+        # 동아리별 배정 인원 관리
+        club_assignments = {club: [] for club in club_data.keys()}
         
-        for i, student in enumerate(student_names):
-            club = club_names[i % a]  # 균등 배정을 위한 모듈러 연산
+        for student in student_names:
+            available_clubs = [club for club in club_data.keys() if len(club_assignments[club]) < club_data[club]]
+            if not available_clubs:
+                st.warning("모든 동아리가 정원이 초과되었습니다. 일부 학생은 배정되지 않을 수 있습니다.")
+                break
+            club = random.choice(available_clubs)
             club_assignments[club].append(student)
             
             # 실시간 업데이트 (추첨하듯이 보이도록)
