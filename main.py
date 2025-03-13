@@ -62,16 +62,24 @@ if st.button("랜덤 배정 시작"):
             if not available_clubs:
                 st.warning("모든 동아리가 정원이 초과되었습니다. 일부 학생은 배정되지 않을 수 있습니다.")
                 break
+            
+            # 동아리명 애니메이션 효과
+            for _ in range(10):  # 10번 랜덤하게 바꿈
+                temp_club = random.choice(list(club_data.keys()))
+                process_area.write(f"🎲 {student} → {temp_club}")
+                time.sleep(0.1)
+            
+            # 최종 결정된 동아리
             club = random.choice(available_clubs)
             club_assignments[club].append(student)
             
-            # 실시간 업데이트 (추첨하듯이 보이도록)
-            process_area.write(f"🎲 {student} → {club}")
+            # 결과 표시 후 잠시 멈춤
+            process_area.write(f"✅ {student} → {club}")
             time.sleep(0.5)
             
             # 데이터 저장
             assignments = pd.concat([assignments, pd.DataFrame([[student, club]], columns=["학생", "동아리"])], ignore_index=True)
-        
-        # 최종 배정 결과 출력
-        st.subheader("최종 배정 결과")
-        st.dataframe(assignments)
+            
+            # 실시간 배정 결과 업데이트
+            st.subheader("최종 배정 결과")
+            st.dataframe(assignments)
